@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% load static from static %}
+{% block content %}
+
+            
+    <!-- Custom styles for this template -->
+    <link href="{% static 'features.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="b-example-divider"></div>
+        
+       
+
+
+    <!-- Bootstrap core CSS -->
+<link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+.bd-placeholder-img {
+font-size: 1.125rem;
+text-anchor: middle;
+-webkit-user-select: none;
+-moz-user-select: none;
+user-select: none;
+}
+
+@media (min-width: 768px) {
+.bd-placeholder-img-lg {
+font-size: 3.5rem;
+}
+}
+</style>
+
+
+</head>
+<body>
+
+
+
+<main>
+
+<section class="py-5 text-center bg-gradient-primary-to-secondary ">
+<div class="row py-lg-5">
+<div class="col-lg-6 col-md-8 mx-auto">
+<h1 class="fw-light text-light">LETS SEE WHATS UP FOR BIDDING</h1>
+
+<a href="/add-bid" class="btn btn-dark my-2">Place a bid</a>
+
+</div>
+</div>
+</section>
+
+
+<!-- Basic features section-->
+<div class="b-example-divider"></div>
+{% if adminView %}
+    <h3 class="mt-3" style="text-align: center;">Bidding is currently turned off. Only you can view this as the admin</h3>
+    <p class="mt-3" style="text-align: center;">Go to the <a href="/add-bid"> Admin</a> change to activate Bidding for all users</p>
+{% endif %}
+
+{% if success %}
+    <h3 class="mt-3" style="color:green; text-align: center;">{{success}}</h3>
+{% endif %}
+{% if error %}
+    <h3 class="mt-3" style="color:red; text-align: center;">{{error}}</h3>
+{% endif %}
+
+<section class="bg-light">
+ <div class="container px-5">
+   
+    {% for post in product %}
+     <div class="row gx-5 align-items-center justify-content-center justify-content-lg-between  border-bottom">
+         <div class="col-12 col-lg-5">
+             <div class="px-5 px-sm-0"><img class="img-fluid rounded-circle" src="{{post.thumb.url}}" alt="..." /></div>
+            
+   
+         </div>
+         <div class="col-sm-8 col-md-6 p-5">
+             <h2 class="display-4 lh-1 mb-4">{{post.brand}}</h2>
+             <p class="lead fw-normal text-dark mb-5 mb-lg-0">  
+                 name of device: {{post.device}} <br>
+                 Current bid: &#8358;{{post.bidPrice}}<br>
+
+                 <div class="mb-3">
+                    <form class="create-form" method="post" enctype="multipart/form-data">{% csrf_token %}
+                        <input type="number" class="form-control" name="price" placeholder="Price">
+                        <input type="text" class="form-control" name="name" placeholder="Full name">
+                        <input type="number" class="form-control" name="phone" placeholder="Phone number">
+                        <input type="email" class="form-control" name="email" placeholder="email">
+                        <input class="form-control" hidden name="current" value="{{post.price}}" readonly>
+                        <input class="form-control" hidden name="id" value="{{post.id}}" readonly>
+                        <button class="btn btn-dark" type="submit" id="button-addon2">Place bid</button>
+                    </form>
+                   </div>
+             </p>
+            
+
+     
+            
+         </div>
+     </div>
+     {% endfor %}
+     {% if not product %}  
+        <h2 class="display-6 mb-4">There is no Item for bidding currently</h2>
+
+     {% endif %}
+
+
+
+ </div>
+
+
+<div class="b-example-divider"></div>
+{% endblock%}
