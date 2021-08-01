@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
 from .forms import CreateProductForm, CreateBidForm
-from .models import Products, Bidder
+from .models import Products, Bidder, BidStatus
 from decouple import config
 from accounts.models import Account
 
@@ -21,9 +21,9 @@ def home_inner_view(request):
 
 	context = {}
 	phoneNumber = config('PhoneNumber')
-	context['swap'] = "https://api.whatsapp.com/send/?phone=%2B"+phoneNumber+"&text=Hi,+I+want+to+a+device+"
+	context['swap'] = "https://api.whatsapp.com/send/?phone=%2B"+phoneNumber+"&text=Hi,+I+want+to+swap+a+device+"
 	context['sell'] = "https://api.whatsapp.com/send/?phone=%2B"+phoneNumber+"&text=Hi,+I+want+to+sell+a+device+"
-	context['fix'] = "https://api.whatsapp.com/send/?phone=%2B"+phoneNumber+"&text=Hi,+I+want+to+sell+a+device+"
+	context['fix'] = "https://api.whatsapp.com/send/?phone=%2B"+phoneNumber+"&text=Hi,+I+want+to+fix+a+device+"
 
 	return render(request, "main/home.html", context)
 
@@ -32,7 +32,7 @@ def phone_view(request):
 
 	context = {}
 	phoneNumber = config('PhoneNumber')
-	context['phone'] = "https://api.whatsapp.com/send/?phone=%2B"+phoneNumber+"&text=Hi,+I+want+to+a+device+"
+	context['phone'] = "https://api.whatsapp.com/send/?phone=%2B"+phoneNumber+"&text=Hi,+I+want+to+make+enquires+for+a+Phone+"
 
 	return render(request, "main/phones.html", context)
 
@@ -41,7 +41,7 @@ def laptop_view(request):
 
 	context = {}
 	phoneNumber = config('PhoneNumber')
-	context['phone'] = "https://api.whatsapp.com/send/?phone=%2B"+phoneNumber+"&text=Hi,+I+want+to+a+device+"
+	context['phone'] = "https://api.whatsapp.com/send/?phone=%2B"+phoneNumber+"&text=Hi,+I+want+to+make+enquires+for+a+Laptop+"
 
 	return render(request, "main/laptops.html", context)
 
@@ -51,7 +51,7 @@ def accessories_view(request):
 
 	context = {}
 	phoneNumber = config('PhoneNumber')
-	context['phone'] = "https://api.whatsapp.com/send/?phone=%2B"+phoneNumber+"&text=Hi,+I+want+to+a+device+"
+	context['phone'] = "https://api.whatsapp.com/send/?phone=%2B"+phoneNumber+"&text=Hi,+I+want+to+an+Accessory+"
 
 	return render(request, "main/accessories.html", context)
 
@@ -60,17 +60,16 @@ def accessories_view(request):
 def bid_view(request):
 
 	context = {}
+	status = BidStatus.objects.all().first()
+	user = Account.objects.filter(email=request.user)
 
-	user = Account.objects.get(is_admin=True)
-
-	if user.active_bid:
+	if status.active_bid:
 		product = Products.objects.all()
-	elif user== request.user:
+	elif not status.active_bid and user:
 		product = Products.objects.all()
 		context['adminView'] = True
 	else:
 		product = None
-
 		
 	context['product'] = product
 
@@ -111,6 +110,8 @@ def add_bid_view(request):
 
 
 	user = Account.objects.get(email=request.user)
+	status = BidStatus.objects.all().first()
+
 
 	form = CreateProductForm(request.POST or None, request.FILES or None)
 	if request.method == 'POST':
@@ -125,14 +126,14 @@ def add_bid_view(request):
 				context['error'] = "Error submitting form"
 		
 		if request.POST.get("bid-status"):
-			user.active_bid = not user.active_bid
-			user.save()
+			status.active_bid = not status.active_bid
+			status.save()
 
 
 		if request.POST.get("delete"):
 			bidders.delete()
 
-	context['bidStatus'] = user.active_bid	
+	context['bidStatus'] = status.active_bid	
 	context['product'] = bidders.count()
 	context['form'] = form
 

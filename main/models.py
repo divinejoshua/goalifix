@@ -33,3 +33,12 @@ class Bidder(models.Model):
 
 	def __str__(self):
 		return self.name
+
+
+# Create your models here.
+class BidStatus(models.Model):
+	active_bid				= models.BooleanField(default=False)
+	date         = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return str(self.active_bid)
