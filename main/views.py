@@ -59,6 +59,8 @@ def accessories_view(request):
 
 	return render(request, "main/accessories.html", context)
 
+	#Some changes
+
 
 
 def bid_view(request):
