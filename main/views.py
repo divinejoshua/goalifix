@@ -5,6 +5,10 @@ from .forms import CreateProductForm, CreateBidForm
 from .models import Products, Bidder, BidStatus
 from decouple import config
 from accounts.models import Account
+from django.utils import timezone
+
+import time
+from datetime import datetime
 
 
 # Create your views here.
@@ -70,9 +74,15 @@ def bid_view(request):
 		context['adminView'] = True
 	else:
 		product = None
+
+
+	# now = datetime.datetime.now()
+	five_h_ago = timezone.now() - timezone.timedelta(hours=1)
+	time1 = five_h_ago
+	product = Products.objects.filter(date__gt=five_h_ago).order_by('-id')
 		
 	context['product'] = product
-
+	
 
 	form = CreateBidForm(request.POST or None, request.FILES or None)
 	if request.method == 'POST':   

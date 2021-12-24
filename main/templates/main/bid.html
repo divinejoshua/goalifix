@@ -81,15 +81,18 @@ font-size: 3.5rem;
              <p class="lead fw-normal text-dark mb-5 mb-lg-0">  
                  name of device: {{post.device}} <br>
                  Current bid: &#8358;{{post.bidPrice}}<br>
+                 Device description:
+                 <hr>
+                 {{post.body}}<br>
 
-                 <div class="mb-3">
+                 <div class="mb-3 mt-3">
                     <form class="create-form" method="post" enctype="multipart/form-data">{% csrf_token %}
-                        <input type="number" class="form-control" name="price" placeholder="Price">
-                        <input type="text" class="form-control" name="name" placeholder="Full name">
-                        <input type="number" class="form-control" name="phone" placeholder="Phone number">
-                        <input type="email" class="form-control" name="email" placeholder="email">
-                        <input class="form-control" hidden name="current" value="{{post.price}}" readonly>
-                        <input class="form-control" hidden name="id" value="{{post.id}}" readonly>
+                        <input type="number" class="form-control" name="price" placeholder="Price" required>
+                        <input type="text" class="form-control" name="name" placeholder="Full name" required>
+                        <input type="number" class="form-control" name="phone" placeholder="Phone number" required>
+                        <input type="email" class="form-control" name="email" placeholder="email" required>
+                        <input class="form-control" hidden name="current" value="{{post.price}}" readonly required>
+                        <input class="form-control" hidden name="id" value="{{post.id}}" readonly required>
                         <button class="btn btn-dark" type="submit" id="button-addon2">Place bid</button>
                     </form>
                    </div>
